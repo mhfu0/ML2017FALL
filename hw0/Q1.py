@@ -17,9 +17,11 @@ def main(argv):
             wordcount[w] += 1
     
     out = open("Q1.txt", "w")
+    outtext = ""
     for w in wordlist:
-        outline = ' '.join([w, str(wordlist.index(w)), str(wordcount[w])]) + "\n"
-        out.write(outline)
+        outtext += (' '.join([w, str(wordlist.index(w)), str(wordcount[w])]) + "\n")
+    
+    out.write(outtext.strip('\n'))
 
 if __name__ == "__main__":
     main(sys.argv)
