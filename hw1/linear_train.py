@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Linear regression implementation for baseline
-# usage: ./linear.py [training_set] [validation_set] [model_out]
+# usage: ./linear_train.py [training] [validation] [model_out]
 
 import sys
 import numpy as np
@@ -15,6 +15,9 @@ def main(argv):
     x_data = []
     y_data = []
     with open(argv[1], 'r') as train_set:
+        # Keep feature index information
+        feature_idx = train_set.readline()
+        
         for line in train_set:
             if '-1' not in line:
                 tmp = line.strip('\n').split(',')
@@ -34,7 +37,7 @@ def main(argv):
     # y = b + sum(w*x) + sum(w^2)
 
     b = 1
-    w = np.random.randn(num_w)/1000
+    w = np.random.randn(num_w)/100
     ld = 0.001  # lambda for regularization
     
     # Apply AdaGrad
@@ -45,6 +48,8 @@ def main(argv):
     # lr_b, lr_w are sigmas for AdaGrad
     lr_b = 0.0
     lr_w = np.zeros(num_w)
+    
+    prev_loss = float('inf')
     
     for k in range(iteration):
         print('iteration:',k)
@@ -61,6 +66,10 @@ def main(argv):
         loss = sum(np.power(dy,2))
         print('current loss:',loss)
         
+        # Stop when little improvement
+        if(np.abs(prev_loss-loss) < 1e-4):
+            break
+        
         # Compute gradients
         b_grad -= np.sum(2*dy)
         for i in range(num_w):
@@ -74,6 +83,8 @@ def main(argv):
         b -= lr/np.sqrt(lr_b) * b_grad
         for i in range(num_w):
             w[i] = w[i]-lr/np.sqrt(lr_w[i])*w_grad[i]
+            
+        prev_loss = loss
     
     print('Training ended with total loss:',loss)
     
@@ -101,7 +112,9 @@ def main(argv):
     print('RMSE on validation set:',rmse)
     
     with open(argv[3], 'w') as output:
-        line = str(b)+','+','.join(list(w.astype(str)))
+        line = ''
+        line += feature_idx
+        line += str(b)+','+','.join(list(w.astype(str)))
         output.write(line)
 
 if __name__== "__main__":

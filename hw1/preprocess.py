@@ -17,11 +17,11 @@ import sys
 import numpy as np
 import pandas as pd
 
-feature_idx = set([9,10])   # Set which features to use
+feature_idx = set([2,4,5,6,7,8,9,10,12])   # Set which features to use
 num_feature = len(feature_idx)
 num_feature_t = 18
 
-feature_dropped_idx = set(range(18))-feature_idx  # type:set
+feature_dropped_idx = set(range(num_feature_t))-feature_idx  # type:set
 
 num_prev_hour = 9
 day_per_month = 20
