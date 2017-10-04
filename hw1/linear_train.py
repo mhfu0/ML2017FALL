@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Linear regression implementation for baseline
-# usage: ./linear.py [training_set] [model_out]
+# usage: ./linear.py [training_set] [validation_set] [model_out]
 
 import sys
 import numpy as np
@@ -25,18 +25,18 @@ def main(argv):
     
     x_data = np.array(x_data).astype(float)
     y_data = np.array(y_data).astype(float)
-    
-    print(x_data.shape)
 
     # randomly determine model parameters
-    # y = b + sum(w*x) + [regularization]
+    # L2_regularization:
+    # y = b + sum(w*x) + sum(w^2)
+
     b = 1
     w = np.random.randn(num_w)/1000
-    ld = 1  # lambda for regularization
+    ld = 0.001  # lambda for regularization
     
     # Apply AdaGrad (fixed rate lr = 0.00000000035 works well)
     lr = 1  # learning rate
-    iteration = 100000
+    iteration = 10000
     
     lr_b = 0.0
     lr_w = np.zeros(num_w)
@@ -49,7 +49,7 @@ def main(argv):
         
         # define loss function as square error
         # predicted value y from nth data = nth entry of X*w+b
-        y_predict = np.dot(x_data,w)+b
+        y_predict = np.dot(x_data,w) + b + ld*np.sum(np.power(w,2)) # latter terms are scalors
         dy = y_data - y_predict
         
         # check current loss
@@ -58,7 +58,7 @@ def main(argv):
         
         b_grad -= np.sum(2*dy)
         for i in range(num_w):
-            w_grad[i] -= np.sum(np.multiply(2*dy,x_data.T[i]))
+            w_grad[i] -= np.dot( (2*dy) , (x_data.T[i]+2*ld*w[i]) )
             
         lr_b += b_grad ** 2
         lr_w += np.power(np.array(w_grad),2)
@@ -68,7 +68,32 @@ def main(argv):
         for i in range(num_w):
             w[i] = w[i]-lr/np.sqrt(lr_w[i])*w_grad[i]
     
-    with open(argv[2], 'w') as output:
+    print('end with total loss:',loss)
+    
+    # test with validation set
+    print('=====validation=====')
+    x_data = []
+    y_data = []
+    with open(argv[2], 'r') as val_set:
+        for line in val_set:
+            tmp = line.strip('\n').split(',')
+            tmp = list(map(float, tmp))
+            
+            x_data.append(tmp[1:])
+            y_data.append(tmp[0])
+    
+    x_data = np.array(x_data).astype(float)
+    y_data = np.array(y_data).astype(float)
+    print('len(x_data)=',len(x_data))
+
+    y_predict = np.dot(x_data,w)+b
+    dy = y_data - y_predict
+    loss = sum(np.power(dy,2))
+    rmse = np.sqrt(sum(np.power(dy,2))/len(x_data))
+    print('Total loss on validation set: ',loss)
+    print('RMSE on validation set: ',rmse)
+    
+    with open(argv[3], 'w') as output:
         line = str(b)+','+','.join(list(w.astype(str)))
         output.write(line)
 

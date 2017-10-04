@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 num_feature = 18
-num_prev_hour = 9
+num_prev_hour = 5
 day_per_month = 20
 
 # PM2.5 values are on the 9th row of each day
