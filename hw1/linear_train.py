@@ -34,7 +34,8 @@ def main(argv):
 
     # randomly determine model parameters
     # L2_regularization:
-    # y = b + sum(w*x) + sum(w^2)
+    # y = b + sum(w*x) + ld*sum(w^2)
+    # TODO: wrong
 
     b = 1
     w = np.random.randn(num_w)/100
@@ -63,7 +64,7 @@ def main(argv):
         dy = y_data - y_predict
         
         # check current loss
-        loss = sum(np.power(dy,2))
+        loss = (np.sum(dy ** 2) + ld * np.sum(w ** 2))/len(y)
         print('current loss:',loss)
         
         # Stop when little improvement
@@ -73,7 +74,7 @@ def main(argv):
         # Compute gradients
         b_grad -= np.sum(2*dy)
         for i in range(num_w):
-            w_grad[i] -= np.dot( (2*dy) , (x_data.T[i]+2*ld*w[i]) )
+            w_grad[i] -= np.dot(2*dy, x_data.T[i])+2*ld*w[i]
         
         # Compute sigmas for AdaGrad
         lr_b += b_grad ** 2
