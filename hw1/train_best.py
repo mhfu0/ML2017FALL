@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Linear regresssion
-# ./train_test_v2.py [train] [test] [model]
+# ./train_test.py [train] [test] [model] > [result]
 
 import sys
 import numpy as np
@@ -148,7 +148,7 @@ def main(argv):
         line += str(b)+','+','.join(list(w.astype(str)))
         output.write(line)
         
-        
+    '''
     # Prediction on test set
     test_raw = []
     with open(argv[2], 'r') as test_f:
@@ -175,6 +175,7 @@ def main(argv):
         y = np.dot(w,x)+b
         
         print('%s,%f' % (idx, y))
-
+    '''
+    
 if __name__ == '__main__':
     main(sys.argv)
