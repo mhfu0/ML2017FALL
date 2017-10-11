@@ -7,7 +7,7 @@ import sys
 import numpy as np
 
 feature_set=[7,9]
-prev_hrs=5
+prev_hrs=9
 
 def main(argv):
     # Load model parameters
