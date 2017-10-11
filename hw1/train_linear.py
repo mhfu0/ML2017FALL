@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Linear regresssion
-# ./train_test_linear.py [train] [model]
+# ./train_linear.py [train] [model]
 
 import sys
 import numpy as np

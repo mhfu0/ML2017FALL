@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Prediction on test set with saved model
 # model: 18lin+2quad 25000iter 25%rand_drop
-# ./hw1_best.py [model] [test] > [result]
+# ./test_best.py [model] [test] > [result]
 
 import sys
 import numpy as np
@@ -44,7 +44,7 @@ def main(argv):
         
         y = np.dot(w,x)+b
         
-        print('%s,%f' % (idx, y))
+        print('%s,%.16f' % (idx, y))
 
 if __name__ == '__main__':
     main(sys.argv)

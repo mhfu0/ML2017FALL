@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Linear regresssion
-# ./train_test.py [train] [test] [model] > [result]
+# ./train_best.py [train] [test] [model] > [result]
 
 import sys
 import numpy as np
@@ -8,7 +8,7 @@ import numpy as np
 feature_set=[7,9]
 prev_hrs=9
 iteration=50000
-drop=120
+drop=1
 ld = 0.01
 
 def main(argv):
@@ -110,7 +110,7 @@ def main(argv):
         sys.stderr.write('%d iteration with loss %f\n' % (k, loss))
         
         # Stop when little improvement
-        if(np.abs(prev_loss-loss) < 1e-6):
+        if(np.abs(prev_loss-loss) <= 1e-8):
             break
             
         # Compute gradients
@@ -143,7 +143,7 @@ def main(argv):
     
     
     # Save model
-    with open(argv[3], 'w') as output:
+    with open(argv[2], 'w') as output:
         line = ''
         line += str(b)+','+','.join(list(w.astype(str)))
         output.write(line)

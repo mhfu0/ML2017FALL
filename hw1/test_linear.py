@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Prediction on test set with saved model
 # model: 
-# ./hw1_best.py [model] [test] > [result]
+# ./test_linear.py [model] [test] > [result]
 
 import sys
 import numpy as np
