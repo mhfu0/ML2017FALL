@@ -8,7 +8,7 @@ import numpy as np
 feature_set=[7,9]
 prev_hrs=9
 iteration=50000
-drop=120
+drop=48
 ld = 0.0
 
 def main(argv):
@@ -104,7 +104,7 @@ def main(argv):
         sys.stderr.write('%d iteration with loss %f\n' % (k, loss))
         
         # Stop when little improvement
-        if(np.abs(prev_loss-loss) <= 1e-6):
+        if(np.abs(prev_loss-loss) <= 1e-8):
             break
             
         # Compute gradients
