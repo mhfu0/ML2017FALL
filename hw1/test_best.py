@@ -44,7 +44,7 @@ def main(argv):
         
         y = np.dot(w,x)+b
         
-        print('%s,%.16f' % (idx, y))
+        print('%s,%f' % (idx, y))
 
 if __name__ == '__main__':
     main(sys.argv)
