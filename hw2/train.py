@@ -58,6 +58,9 @@ print(x_test.shape[0], 'test examples')
 y_train=Y[:25000]
 y_test=Y[25000:]
 
+y_train=np_utils.to_categorical(y_train)
+y_test=np_utils.to_categrical(y_test)
+
 model = Sequential()
 model.add(Dense(64,input_shape=(106,)))
 model.add(Activation('relu'))
