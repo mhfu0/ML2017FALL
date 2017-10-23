@@ -17,8 +17,6 @@ def normalize(X, testX):
         X[i]=(X[i]-mu)/sigma
     return all[0:len(X)], all[len(X):0]
 
-def 
-
 if __name__ == '__main__'
 
     np.random.seed(7)
@@ -54,4 +52,11 @@ if __name__ == '__main__'
     testX=np.array(testX)
     #testX=testX/XMAX
     
+    # TODO: validation set split
+    
+    # initialize weight with normal dist.
+    w = np.random.randn(106)
+    b = np.random.randn()
+    
+    lr = 0.1
     
