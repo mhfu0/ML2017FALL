@@ -58,65 +58,41 @@ if __name__ == '__main__':
     
     # Normalization
     X, testX = normalize(X, testX)
-    
-    # TODO: validation set split
-    
-    # Initialize weight with normal dist.
-    num_f = 106  # number of features
-    w = np.random.randn(num_f)
-    b = 0.0
-    
-    lr = 1
-    ada_w = np.zeros(len(w))
-    ada_b = 0.0
-    
-    epochs = 1000
-    prev_loss = float('inf')
-    
-    # Gradient descent with adagrad
-    for ep in range(epochs):
-        X, Y = shuffle(X, Y)
-    
-        b_grad = 0.0
-        w_grad = np.zeros(num_f)
-        
-        # Set loss function as cross entropy
-        # output y from nth data = sigmoid(nth entry of X*w+b)
-        y = sigmoid(np.dot(X,w.T)+b)
-        y = y[:,np.newaxis]
-        loss = (-1)*((Y*np.log(y))+((1-Y)*np.log(1-y)))
-        #print(loss)
-        loss = sum(loss)
-        sys.stderr.write('%d iteration with loss %f\n' % (ep+1, loss))
-        
-        # Stop when little improvement
-        if(np.abs(prev_loss-loss) <= 1e-6):
-            break
-        
-        # Compute gradients
-        w_grad=np.mean(-1*X*(Y-y), axis=0)
-        b_grad=np.mean(-1*(Y-y))
-        
-        #w -= lr*w_grad
-        #b -= lr*b_grad
-        
-        # Compute AdaGrad terms
-        ada_b += b_grad ** 2
-        ada_w += w_grad ** 2
-        
-        # Update W, b
-        b -= lr/np.sqrt(ada_b) * b_grad
-        for i in range(len(w)):
-            w[i] -= lr/np.sqrt(ada_w[i]) * w_grad[i]        
-            
-        prev_loss = loss
-        
-    sys.stderr.write('Training ended with total loss: %f\n' % loss)
-    
-    # Test
-    res = sigmoid(np.dot(testX,w.T)+b)
-    res = np.round(res)
-    
+
+    # Gaussian distribution parameters
+    num_data = X.shape[0]
+    N0 = 0
+    N1 = 0
+
+    mu0 = np.zeros((106,))
+    mu1 = np.zeros((106,))
+    for i in range(num_data):
+        if Y[i] == 1:
+            mu0 += X[i]
+            N0 += 1
+        else:
+            mu1 += X[i]
+            N1 += 1
+    mu0 /= N0
+    mu1 /= N1
+
+    sigma0 = np.zeros((106,106))
+    sigma1 = np.zeros((106,106))
+    for i in range(num_data):
+        if Y[i] == 1:
+            sigma0 += np.dot(np.transpose([X[i] - mu0]), [(X[i] - mu0)])
+        else:
+            sigma1 += np.dot(np.transpose([X[i] - mu1]), [(X[i] - mu1)])
+    sigma = (float(N0) / num_data) * (sigma0/N0) + (float(N1) / num_data) * (sigma1/N1)
+
+    sigma_inv = np.linalg.inv(sigma)
+    w = np.dot( (mu0-mu1), sigma_inv)
+    x = testX.T
+    b = (-0.5) * np.dot(np.dot([mu0], sigma_inv), mu0) + (0.5) * np.dot(np.dot([mu1], sigma_inv), mu1) + np.log(float(N0)/N1)
+    a = np.dot(w, x) + b
+    y = sigmoid(a)
+    y_ = np.around(y)
+
     print('id,label')
-    for i,v in enumerate(res):
+    for i,v in enumerate(y_):
         print('%d,%d'%(i+1,v))
