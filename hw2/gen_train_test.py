@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# argv[2]: X_train
+# argv[3]: Y_train
+# argv[4]: X_test
 
 import sys
 import math, random
@@ -26,7 +29,7 @@ if __name__ == '__main__':
     np.random.seed(7)
 
     X=[]
-    with open('data/X_train', 'r') as f:
+    with open(sys.argv[2], 'r') as f:
         f.readline()
         for line in f:
             line = line.strip('\n').split(',')
@@ -38,7 +41,7 @@ if __name__ == '__main__':
     #X=X_n
 
     Y=[]
-    with open('data/Y_train', 'r') as f:
+    with open(sys.argv[3], 'r') as f:
         f.readline()
         for line in f:
             line = line.strip('\n').split(',')
@@ -47,7 +50,7 @@ if __name__ == '__main__':
     Y=np.array(Y).astype('int32')
 
     testX=[]
-    with open('data/X_test','r') as f:
+    with open(sys.argv[4],'r') as f:
         f.readline()
         for line in f:
             line = line.strip('\n').split(',')
