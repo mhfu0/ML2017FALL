@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# argv[1]: (0,1)=(test,train)
+# argv[1]: {0,1}={test,train}
 # argv[2]: model path
 # argv[3]: X_train
 # argv[4]: Y_train

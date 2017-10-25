@@ -3,5 +3,4 @@
 #$3: provided train feature (X_train)  $4: provided train label (Y_train)
 #$5: provided test feature (X_test)    $6: prediction.csv
 
-#python3 ./nn_train_test.py 1 model/model_best.h5 $3 $4 $5 $6
-python3 ./nn_train_test.py 0 model/model_best.h5 $3 $4 $5 $6
+python3 ./gen_train_test.py ./model_gen $3 $4 $5 > $6
