@@ -9,6 +9,7 @@
 import sys
 import tensorflow as tf
 import numpy as np
+'''
 from keras.backend.tensorflow_backend import set_session
 
 config = tf.ConfigProto()
@@ -18,6 +19,7 @@ config.intra_op_parallelism_threads=1
 config.inter_op_parallelism_threads=2
 tf.set_random_seed(1234)
 set_session(tf.Session(config=config))
+'''
 
 import os, random
 os.environ['PYTHONHASHSEED'] = '0'

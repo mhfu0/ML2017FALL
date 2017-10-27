@@ -76,7 +76,7 @@ if __name__ == '__main__':
         b = 0.0
         
         lr = 1
-        ld = 0.1
+        ld = 0.0
         ada_w = np.zeros(len(w))
         ada_b = 0.0
         
