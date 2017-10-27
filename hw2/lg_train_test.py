@@ -76,6 +76,7 @@ if __name__ == '__main__':
         b = 0.0
         
         lr = 1
+        ld = 0.1
         ada_w = np.zeros(len(w))
         ada_b = 0.0
         
@@ -94,7 +95,8 @@ if __name__ == '__main__':
             y = sigmoid(np.dot(X,w.T)+b)
             y = y[:,np.newaxis]
             loss = (-1)*((Y*np.log(y))+((1-Y)*np.log(1-y)))
-            loss = np.mean(loss)
+            loss = (sum(loss)+ld*sum(w**2))/len(X)
+            #loss = np.mean(loss)
             if ep % 10 == 9:
                 sys.stderr.write('%d iteration with loss %f\n' % (ep+1, loss))
             
@@ -103,7 +105,8 @@ if __name__ == '__main__':
             #    break
             
             # Compute gradients
-            w_grad=np.mean(-1*X*(Y-y), axis=0)
+            #w_grad=np.mean(-1*X*(Y-y), axis=0)
+            w_grad=(np.sum(-1*X*(Y-y), axis=0)+2*ld*w)/len(X)  # regularization
             b_grad=np.mean(-1*(Y-y))
             
             #w -= lr*w_grad
