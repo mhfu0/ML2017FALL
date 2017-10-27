@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 
 from xgboost import XGBClassifier
-from tabulate import tabulate
 
 def normalize(X, testX):
     allX = np.concatenate((X, testX)).astype(float)
