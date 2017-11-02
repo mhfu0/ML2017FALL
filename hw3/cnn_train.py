@@ -117,7 +117,7 @@ def shuffle(X, Y):
 def main(argv):
     gc.collect()
 
-    model_path = 'model/model_n.h5'
+    model_path = 'model/model_gen.h5'
     x_train, y_train = load_train(argv[1])
     idx, x_test = load_test(argv[2])    
     
@@ -145,6 +145,7 @@ def main(argv):
     x_test = x_test.astype(np.float32)
     x_train, x_test = normalize1D(x_train, x_test)
     
+    # Reshape Data
     x_train = reshape_data(x_train)
     
     # Process label into one-hot data

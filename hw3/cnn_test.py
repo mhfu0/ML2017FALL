@@ -97,7 +97,7 @@ def reshape_data(x):
     return x_r
 
 def main(argv):
-    model_path = 'model/model_n.h5'
+    model_path = 'model/model_gen.h5'
     x_train, y_train = load_train(argv[1])
     idx, x_test = load_test(argv[2])    
     
@@ -125,6 +125,7 @@ def main(argv):
     x_test = x_test.astype(np.float32)    
     x_train, x_test = normalize1D(x_train, x_test)
     
+    # Reshape Data
     x_test = reshape_data(x_test)
     
     # Model parameters
@@ -135,7 +136,7 @@ def main(argv):
     # Load trained model
     sys.stderr.write('Load trained model...\n')
     model = load_model(model_path)
-    #model.summary()
+    model.summary()
 
     y_test = model.predict_classes(x_test, verbose=0)
     print('id,label')
