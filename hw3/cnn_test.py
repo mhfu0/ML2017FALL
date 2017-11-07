@@ -118,12 +118,12 @@ def main(argv):
         arr = arr.astype('uint8')
         im = Image.fromarray(arr)
         im.save('image/train/%.5d.jpg'%i)
-    '''
     
     # Normalization
     x_train = x_train.astype(np.float32)
     x_test = x_test.astype(np.float32)    
     x_train, x_test = normalize1D(x_train, x_test)
+    '''
     
     # Reshape Data
     x_test = reshape_data(x_test)
@@ -136,7 +136,7 @@ def main(argv):
     # Load trained model
     sys.stderr.write('Load trained model...\n')
     model = load_model(model_path)
-    model.summary()
+    #model.summary()
 
     y_test = model.predict_classes(x_test, verbose=0)
     print('id,label')

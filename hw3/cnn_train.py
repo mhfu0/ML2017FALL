@@ -138,12 +138,12 @@ def main(argv):
         arr = arr.reshape((48,48)).astype('uint8')
         im = Image.fromarray(arr)
         im.save('image/%.5d.jpg'%i)
-    '''
     
     # Normalization
     x_train = x_train.astype(np.float32)
     x_test = x_test.astype(np.float32)
     x_train, x_test = normalize1D(x_train, x_test)
+    '''
     
     # Reshape Data
     x_train = reshape_data(x_train)
@@ -170,24 +170,23 @@ def main(argv):
     model.add(BatchNormalization())
     model.add(Conv2D(32, kernel_size=kernel_size,
                             padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=pool_size))
     model.add(BatchNormalization())
+    model.add(MaxPooling2D(pool_size=pool_size))
     model.add(Dropout(0.5))
     
     for i in range(3):
         model.add(Conv2D(64, kernel_size=kernel_size,
                          padding='same', activation='relu'))
         model.add(BatchNormalization())
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(BatchNormalization())
     model.add(Dropout(0.5))
+    model.add(MaxPooling2D(pool_size=pool_size))
     
     for i in range(3):
         model.add(Conv2D(128, kernel_size=kernel_size,
                          padding='same', activation='relu'))
-    model.add(Dropout(0.5))
+        model.add(BatchNormalization())
     model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
     
     model.add(Flatten())
     model.add(Dense(64, activation='relu'))
@@ -206,24 +205,56 @@ def main(argv):
     model.summary()
 
     # Training parameters
-    epochs = 128
-    batch_size = 256
+    epochs = 500
+    batch_size = 32
     checkpointer = ModelCheckpoint(filepath=model_path,
-                                   monitor='val_acc',save_best_only=True,
+                                   monitor='val_loss',save_best_only=True,
                                    verbose=1)
     earlystopping = EarlyStopping(monitor='val_loss',
                                   patience=10, verbose=1)
                                   
     # Shuffle data n times
-    for n in range(3):
+    for n in range(9):
         x_train, y_train = shuffle(x_train, y_train)
+
+    # Split validation data manually
+    validation_split=0.2
+    val_idx=int(len(x_train)*(1-validation_split))
+    x_val=x_train[val_idx:]
+    y_val=y_train[val_idx:]
+    x_train=x_train[:val_idx]
+    y_train=y_train[:val_idx]
+
+    # Augmentation on image data
+    train_datagen = ImageDataGenerator(rotation_range=20,
+                       width_shift_range=0.1,
+                       height_shift_range=0.1,
+                       #rescale=1./255,
+                       horizontal_flip=True,
+                       shear_range=0.1,
+                       zoom_range=0.25,
+                       #featurewise_center=True,
+                       #zca_whitening=True,
+                       #fill_mode='nearest'
+                       )
+    #train_datagen.fit(x_train)
     
     try:
+        '''
         model.fit(x_train, y_train,
                   batch_size=batch_size,epochs=epochs,
-                  validation_split=0.05,
+                  validation_data=(x_val, y_val),
                   callbacks=[checkpointer],
                   verbose=1)
+        '''          
+        model.fit_generator(train_datagen.flow(x_train, y_train, batch_size=64),
+                  steps_per_epoch=x_train.shape[0]//16+4, epochs=epochs,
+                  #validation_data=val_datagen.flow(x_val, y_val, batch_size=batch_size),
+                  #validation_steps=x_val.shape[0]//8,
+                  validation_data=(x_val, y_val),
+                  callbacks=[checkpointer],
+                  verbose=1)
+
     except:
         #model.save(model_path)
         del model
