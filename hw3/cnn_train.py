@@ -121,7 +121,7 @@ def main(argv):
 
     model_path = 'model_.h5'
     x_train, y_train = load_train(argv[1])
-    idx, x_test = load_test(argv[2])    
+    #idx, x_test = load_test(argv[2])    
     
     '''
     # Histogram Equalization
