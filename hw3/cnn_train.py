@@ -6,8 +6,9 @@
 import sys
 import gc
 import numpy as np
-from PIL import Image
+#from PIL import Image
 
+'''
 # Settings for nlg workstation
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
@@ -19,6 +20,7 @@ config.intra_op_parallelism_threads=1
 config.inter_op_parallelism_threads=2
 tf.set_random_seed(1234)  # for reproducibily
 set_session(tf.Session(config=config))
+'''
 
 # Settings for reproducibility
 import os, random
@@ -117,7 +119,7 @@ def shuffle(X, Y):
 def main(argv):
     gc.collect()
 
-    model_path = 'model/model_gen.h5'
+    model_path = 'model_.h5'
     x_train, y_train = load_train(argv[1])
     idx, x_test = load_test(argv[2])    
     
