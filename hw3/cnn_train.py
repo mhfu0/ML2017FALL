@@ -118,7 +118,7 @@ def shuffle(X, Y):
 def main(argv):
     gc.collect()
 
-    model_path = 'model_.h5'
+    model_path = 'model.h5'
     x_train, y_train = load_train(argv[1])
     #idx, x_test = load_test(argv[2])    
     
