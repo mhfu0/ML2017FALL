@@ -1,7 +1,6 @@
 # CNN image emotion classifier
 # argv[0]: cnn_test.py
-# argv[1]: train.csv
-# argv[2]: test.csv
+# argv[1]: test.csv
 
 import sys
 import numpy as np

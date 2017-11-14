@@ -1,7 +1,6 @@
 # CNN image emotion classifier
 # argv[0]: cnn_train.py
 # argv[1]: train.csv
-# argv[2]: test.csv
 
 import sys
 import gc
@@ -207,7 +206,7 @@ def main(argv):
     model.summary()
 
     # Training parameters
-    epochs = 500
+    epochs = 100
     batch_size = 32
     checkpointer = ModelCheckpoint(filepath=model_path,
                                    monitor='val_loss',save_best_only=True,
