@@ -3,23 +3,7 @@
 # argv[1]: train.csv
 
 import sys
-import gc
 import numpy as np
-#from PIL import Image
-
-'''
-# Settings for nlg workstation
-import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session
-
-config = tf.ConfigProto()
-config.gpu_options.allow_growth=True
-#config.gpu_options.per_process_gpu_memory_fraction=0.333
-config.intra_op_parallelism_threads=1
-config.inter_op_parallelism_threads=2
-tf.set_random_seed(1234)  # for reproducibily
-set_session(tf.Session(config=config))
-'''
 
 # Settings for reproducibility
 import os, random
@@ -116,35 +100,8 @@ def shuffle(X, Y):
     return (X[order], Y[order])
 
 def main(argv):
-    gc.collect()
-
     model_path = 'model.h5'
     x_train, y_train = load_train(argv[1])
-    #idx, x_test = load_test(argv[2])    
-    
-    '''
-    # Histogram Equalization
-    x_train = x_train.astype(np.float32)
-    x_test = x_test.astype(np.float32)
-    for i in range(x_train.shape[0]):
-        x_train[i] = hist_eq(np.squeeze(x_train[i]))
-    for i in range(x_test.shape[0]):
-        x_test[i] = hist_eq(np.squeeze(x_test[i]))
-    #x_train /= 255
-    #x_test /= 255
-    
-    # Save as image
-    for i in range(len(x_train)):
-        arr = np.squeeze(x_train[i])
-        arr = arr.reshape((48,48)).astype('uint8')
-        im = Image.fromarray(arr)
-        im.save('image/%.5d.jpg'%i)
-    
-    # Normalization
-    x_train = x_train.astype(np.float32)
-    x_test = x_test.astype(np.float32)
-    x_train, x_test = normalize1D(x_train, x_test)
-    '''
     
     # Reshape Data
     x_train = reshape_data(x_train)
@@ -230,41 +187,15 @@ def main(argv):
     train_datagen = ImageDataGenerator(rotation_range=20,
                        width_shift_range=0.1,
                        height_shift_range=0.1,
-                       #rescale=1./255,
                        horizontal_flip=True,
                        shear_range=0.1,
-                       zoom_range=0.25,
-                       #featurewise_center=True,
-                       #zca_whitening=True,
-                       #fill_mode='nearest'
-                       )
-    #train_datagen.fit(x_train)
+                       zoom_range=0.25)
+                       
+    model.fit_generator(train_datagen.flow(x_train, y_train, batch_size=64),
+              steps_per_epoch=x_train.shape[0]//16+4, epochs=epochs,
+              validation_data=(x_val, y_val),
+              callbacks=[checkpointer],
+              verbose=1)
     
-    try:
-        '''
-        model.fit(x_train, y_train,
-                  batch_size=batch_size,epochs=epochs,
-                  validation_data=(x_val, y_val),
-                  callbacks=[checkpointer],
-                  verbose=1)
-        '''          
-        model.fit_generator(train_datagen.flow(x_train, y_train, batch_size=64),
-                  steps_per_epoch=x_train.shape[0]//16+4, epochs=epochs,
-                  #validation_data=val_datagen.flow(x_val, y_val, batch_size=batch_size),
-                  #validation_steps=x_val.shape[0]//8,
-                  validation_data=(x_val, y_val),
-                  callbacks=[checkpointer],
-                  verbose=1)
-
-    except:
-        #model.save(model_path)
-        del model
-        gc.collect()
-    
-    del model
-    #model = load_model(model_path)
-    #model.save(model_path)
-    gc.collect()
-
 if __name__ == '__main__':
     main(sys.argv)

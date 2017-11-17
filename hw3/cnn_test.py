@@ -4,21 +4,7 @@
 
 import sys
 import numpy as np
-#from PIL import Image
 
-'''
-# Settings for nlg workstation
-import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session
-
-config = tf.ConfigProto()
-config.gpu_options.allow_growth=True
-#config.gpu_options.per_process_gpu_memory_fraction=0.333
-config.intra_op_parallelism_threads=1
-config.inter_op_parallelism_threads=2
-tf.set_random_seed(1234)  # for reproducibily
-set_session(tf.Session(config=config))
-'''
 # Settings for reproducibility
 import os, random
 os.environ['PYTHONHASHSEED'] = '0'
@@ -97,35 +83,9 @@ def reshape_data(x):
     return x_r
 
 def main(argv):
-    #model_path = 'model/model_gen.h5'
     model_path = './model.h5'
-    #x_train, y_train = load_train(argv[1])
     idx, x_test = load_test(argv[1])    
-    
-    '''
-    # Histogram Equalization
-    x_train = x_train.astype(np.float32)
-    x_test = x_test.astype(np.float32)
-    for i in range(x_train.shape[0]):
-        x_train[i] = hist_eq(np.squeeze(x_train[i]))
-    for i in range(x_test.shape[0]):
-        x_test[i] = hist_eq(np.squeeze(x_test[i]))
-    #x_train /= 255
-    #x_test /= 255
-    
-    # Save as image
-    for i in range(len(x_test)):
-        arr = np.squeeze(x_test[i])
-        arr = arr.astype('uint8')
-        im = Image.fromarray(arr)
-        im.save('image/train/%.5d.jpg'%i)
-    
-    # Normalization
-    x_train = x_train.astype(np.float32)
-    x_test = x_test.astype(np.float32)    
-    x_train, x_test = normalize1D(x_train, x_test)
-    '''
-    
+
     # Reshape Data
     x_test = reshape_data(x_test)
     
@@ -137,7 +97,6 @@ def main(argv):
     # Load trained model
     sys.stderr.write('Load trained model...\n')
     model = load_model(model_path)
-    #model.summary()
 
     y_test = model.predict_classes(x_test, verbose=0)
     print('id,label')
