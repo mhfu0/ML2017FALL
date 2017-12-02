@@ -69,18 +69,42 @@ if __name__ == '__main__':
     MAX_NUM_WORDS = 20000  # containing padding zeros
     EMBEDDING_DIM = 100
     
-    # Preprocess texts into int seq
+    # Text preprocessing
+    texts = trim(texts, threshold=1)
+    
+    filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+    tmp = [' '.join(preprocess_string(s, filters=filters)) for s in texts]
+    texts = tmp
+    
+    # Encode texts into int seq
     tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
     tokenizer.fit_on_texts(texts)
     sequences = tokenizer.texts_to_sequences(texts)
+    word_index = tokenizer.word_index 
     
-    word_index = tokenizer.word_index
+    '''
+    # Count word coocurrence with label
+    co_occurence = np.zeros((len(word_index),2), dtype=np.int)
+    for seq, label in zip(sequences, labels):
+        for w in seq:
+            co_occurence[w][label] += 1
+    print(co_occurence[:1000])
+    sys.exit(0)
+    '''
+    
     data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
     num_words = min(MAX_NUM_WORDS, len(word_index))
-    
+        
     # Save Tokenizer object for testing stage
     with open('tokenizer.pickle', 'wb') as f:
         pickle.dump(tokenizer, f)
+    '''
+    for i in range(3):
+        indices = np.arange(data.shape[0])
+        np.random.shuffle(indices)
+        data = data[indices]
+        labels = labels[indices]
+    '''
     
     # Split validation set
     VALIDATION_SPLIT = 0.2
@@ -92,7 +116,8 @@ if __name__ == '__main__':
     
     model = Sequential()
     model.add(Embedding(num_words,EMBEDDING_DIM,input_length=MAX_SEQUENCE_LENGTH))
-    model.add(LSTM(256))
+    #model.add(LSTM(256))
+    model.add(Bidirectional(LSTM(256)))
     model.add(Dense(64))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))

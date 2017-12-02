@@ -75,8 +75,15 @@ if __name__ == '__main__':
         pair = line.strip('\n').split(',', 1)
         test_texts.append(pair[1])
     f.close()
+
+    # Text preprocessing
+    test_texts = trim(test_texts, threshold=1)
     
-    # Preprocessing testing data
+    filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+    tmp = [' '.join(preprocess_string(s, filters=filters)) for s in test_texts]
+    test_texts = tmp
+
+    # Text sequence encoding
     test_sequences = tokenizer.texts_to_sequences(test_texts)
     x_test = pad_sequences(test_sequences, maxlen=MAX_SEQUENCE_LENGTH)
     
