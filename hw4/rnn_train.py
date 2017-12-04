@@ -52,73 +52,81 @@ if __name__ == '__main__':
     # Load training data
     labeled_data_path = sys.argv[1]
     unlabeled_data_path = sys.argv[2]
-    model_path = 'model_n.h5'
-    
-    f = open(labeled_data_path, 'r')
-    texts = []
-    labels = []
-    for line in f:
-        line = line.strip('\n')
-        labels.append(int(line[0]))
-        texts.append(line[10:])
-    f.close()
-    labels = np.array(labels)
     
     # Model settings
     MAX_SEQUENCE_LENGTH = 30
     MAX_NUM_WORDS = 20000  # containing padding zeros
     EMBEDDING_DIM = 100
     
-    # Text preprocessing
-    texts = trim(texts, threshold=1)
-    
-    filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
-    tmp = [' '.join(preprocess_string(s, filters=filters)) for s in texts]
-    texts = tmp
-    
-    # Encode texts into int seq
-    tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
-    tokenizer.fit_on_texts(texts)
-    sequences = tokenizer.texts_to_sequences(texts)
-    word_index = tokenizer.word_index 
-    
-    '''
-    # Count word coocurrence with label
-    co_occurence = np.zeros((len(word_index),2), dtype=np.int)
-    for seq, label in zip(sequences, labels):
-        for w in seq:
-            co_occurence[w][label] += 1
-    print(co_occurence[:1000])
-    sys.exit(0)
-    '''
-    
-    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-    num_words = min(MAX_NUM_WORDS, len(word_index))
+    try:
+        x_train = np.load('data/x_train.npy')
+        y_train = np.load('data/y_train.npy')
+        x_val = np.load('data/x_val.npy')
+        y_val = np.load('data/y_val.npy')
+        print('Preprocessed data exists... Loaded')
         
-    # Save Tokenizer object for testing stage
-    with open('tokenizer.pickle', 'wb') as f:
-        pickle.dump(tokenizer, f)
-    '''
-    for i in range(3):
-        indices = np.arange(data.shape[0])
-        np.random.shuffle(indices)
-        data = data[indices]
-        labels = labels[indices]
-    '''
+        num_words = MAX_NUM_WORDS
+        
+    except:
+        print('Load raw data...')
+        f = open(labeled_data_path, 'r')
+        texts = []
+        labels = []
+        for line in f:
+            line = line.strip('\n')
+            labels.append(int(line[0]))
+            texts.append(line[10:])
+        f.close()
+        labels = np.array(labels)
+        
+        # Text preprocessing
+        texts = trim(texts, threshold=2)
+        
+        filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+        tmp = [' '.join(preprocess_string(s, filters=filters)) for s in texts]
+        texts = tmp
+        
+        # Encode texts into int seq
+        tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
+        tokenizer.fit_on_texts(texts)
+        sequences = tokenizer.texts_to_sequences(texts)
+        word_index = tokenizer.word_index
+        print(len(word_index))
+        sys.exit(0)
+        
+        data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
+        num_words = min(MAX_NUM_WORDS, len(word_index))
+            
+        # Save Tokenizer object for testing stage
+        with open('tokenizer_n.pickle', 'wb') as f:
+            pickle.dump(tokenizer, f)
+        '''
+        for i in range(3):
+            indices = np.arange(data.shape[0])
+            np.random.shuffle(indices)
+            data = data[indices]
+            labels = labels[indices]
+        '''
     
-    # Split validation set
-    VALIDATION_SPLIT = 0.2
-    num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
-    x_train = data[:-num_validation_samples]
-    y_train = labels[:-num_validation_samples]
-    x_val = data[-num_validation_samples:]
-    y_val = labels[-num_validation_samples:]
+        # Split validation set
+        VALIDATION_SPLIT = 0.2
+        num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+        x_train = data[:-num_validation_samples]
+        y_train = labels[:-num_validation_samples]
+        x_val = data[-num_validation_samples:]
+        y_val = labels[-num_validation_samples:]
+        
+        np.save('data/x_train.npy', x_train)
+        np.save('data/y_train.npy', y_train)
+        np.save('data/x_val.npy', x_val)
+        np.save('data/y_val.npy', y_val)
+    
+    model_path = 'model_n.h5'
     
     model = Sequential()
     model.add(Embedding(num_words,EMBEDDING_DIM,input_length=MAX_SEQUENCE_LENGTH))
-    #model.add(LSTM(256))
-    model.add(Bidirectional(LSTM(256)))
-    model.add(Dense(64))
+    model.add(LSTM(256, kernel_initializer='truncated_normal'))
+    model.add(Dense(64,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='truncated_normal'))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy',

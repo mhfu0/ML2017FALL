@@ -55,13 +55,14 @@ if __name__ == '__main__':
     MAX_NUM_WORDS = 20000  # containing padding zeros
     EMBEDDING_DIM = 100
     
-    # Load tokenizer 
-    f = open('tokenizer.pickle', 'rb')
+    # Load tokenizer
+    tokenizer_path = 'tokenizer_n.pickle'
+    f = open(tokenizer_path, 'rb')
     tokenizer = pickle.load(f)
     f.close()
     
     # Load LSTM model
-    model_path = 'model_n.h5'
+    model_path = 'model_semi.h5'
     model = load_model(model_path)
     model.summary()
     
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     f.close()
 
     # Text preprocessing
-    test_texts = trim(test_texts, threshold=1)
+    test_texts = trim(test_texts, threshold=2)
     
     filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
     tmp = [' '.join(preprocess_string(s, filters=filters)) for s in test_texts]
