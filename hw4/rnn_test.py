@@ -49,27 +49,29 @@ def trim(text_list, threshold=2):
     return result
 
 if __name__ == '__main__':
+    testing_data_path = sys.argv[1]
+    output_path = sys.argv[2]
+
+    model_path = 'model_semi.h5'
+    tokenizer_path = 'tokenizer_max.pickle'
     
     # Model settings
-    MAX_SEQUENCE_LENGTH = 30
-    MAX_NUM_WORDS = 20000  # containing padding zeros
+    MAX_SEQUENCE_LENGTH = 40
+    #MAX_NUM_WORDS = 20000  # containing padding zeros
+    MAX_NUM_WORDS = None
     EMBEDDING_DIM = 100
     
     # Load tokenizer
-    tokenizer_path = 'tokenizer_n.pickle'
     f = open(tokenizer_path, 'rb')
     tokenizer = pickle.load(f)
     f.close()
     
     # Load LSTM model
-    model_path = 'model_semi.h5'
     model = load_model(model_path)
     model.summary()
     
     # Load testing data
-    testing_data_path = sys.argv[1]
     f = open(testing_data_path, 'r')
-    
     f.readline()
     test_texts = []
     for line in f:
@@ -80,9 +82,11 @@ if __name__ == '__main__':
     # Text preprocessing
     test_texts = trim(test_texts, threshold=2)
     
-    filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+    #filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+    filters = [lambda x: x.lower(), stem_text, strip_multiple_whitespaces]
     tmp = [' '.join(preprocess_string(s, filters=filters)) for s in test_texts]
     test_texts = tmp
+    del tmp
 
     # Text sequence encoding
     test_sequences = tokenizer.texts_to_sequences(test_texts)
@@ -93,7 +97,6 @@ if __name__ == '__main__':
     result_list = list(np.squeeze(result))
     
     # Output result
-    output_path = sys.argv[2]
     f = open(output_path, 'w')
     f.write('id,label\n')
     for i, y in enumerate(result_list):

@@ -52,10 +52,12 @@ if __name__ == '__main__':
     # Load training data
     labeled_data_path = sys.argv[1]
     unlabeled_data_path = sys.argv[2]
+    tokenizer_path = 'tokenizer_max.pickle'
     
     # Model settings
-    MAX_SEQUENCE_LENGTH = 30
-    MAX_NUM_WORDS = 20000  # containing padding zeros
+    MAX_SEQUENCE_LENGTH = 40
+    #MAX_NUM_WORDS = 20000  # containing padding zeros
+    MAX_NUM_WORDS = None
     EMBEDDING_DIM = 100
     
     try:
@@ -65,10 +67,14 @@ if __name__ == '__main__':
         y_val = np.load('data/y_val.npy')
         print('Preprocessed data exists... Loaded')
         
-        num_words = MAX_NUM_WORDS
+        with open(tokenizer_path, 'rb') as f:
+            tokenizer = pickle.load(f)
+            print('Tokenizer load from %s...' % (tokenizer_path))
+        word_index = tokenizer.word_index
+        num_words = len(word_index)
         
     except:
-        print('Load raw data...')
+        print('Load labeled raw data...')
         f = open(labeled_data_path, 'r')
         texts = []
         labels = []
@@ -79,27 +85,40 @@ if __name__ == '__main__':
         f.close()
         labels = np.array(labels)
         
+        print('Load unlabeled raw data...')
+        # Load unlabeled data
+        f = open(unlabeled_data_path, 'r')
+        texts_un = []
+        for line in f:
+            texts_un.append(line.strip('\n'))
+        f.close()
+        
         # Text preprocessing
         texts = trim(texts, threshold=2)
+        texts_un = trim(texts_un, threshold=2)
         
-        filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+        #filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+        filters = [lambda x: x.lower(), stem_text, strip_multiple_whitespaces]
         tmp = [' '.join(preprocess_string(s, filters=filters)) for s in texts]
-        texts = tmp
+        texts = tmp.copy()
+        tmp_ = [' '.join(preprocess_string(s, filters=filters)) for s in texts_un]
+        texts_un = tmp_
+        del tmp, tmp_
         
         # Encode texts into int seq
-        tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
-        tokenizer.fit_on_texts(texts)
-        sequences = tokenizer.texts_to_sequences(texts)
+        tokenizer = Tokenizer(num_words=MAX_NUM_WORDS, filters='\n\t')
+        tokenizer.fit_on_texts(texts+texts_un)
         word_index = tokenizer.word_index
-        print(len(word_index))
-        sys.exit(0)
-        
-        data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-        num_words = min(MAX_NUM_WORDS, len(word_index))
+        num_words = len(word_index)
             
         # Save Tokenizer object for testing stage
-        with open('tokenizer_n.pickle', 'wb') as f:
+        with open(tokenizer_path, 'wb') as f:
             pickle.dump(tokenizer, f)
+            print('Tokenizer saved as %s' % (tokenizer_path))
+        
+        sequences = tokenizer.texts_to_sequences(texts)
+        data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
+        
         '''
         for i in range(3):
             indices = np.arange(data.shape[0])
@@ -125,6 +144,7 @@ if __name__ == '__main__':
     
     model = Sequential()
     model.add(Embedding(num_words,EMBEDDING_DIM,input_length=MAX_SEQUENCE_LENGTH))
+    model.add(LSTM(256, kernel_initializer='truncated_normal', return_sequences=True))
     model.add(LSTM(256, kernel_initializer='truncated_normal'))
     model.add(Dense(64,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='truncated_normal'))
     model.add(Dropout(0.5))

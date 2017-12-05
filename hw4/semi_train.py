@@ -51,24 +51,34 @@ def trim(text_list, threshold=2):
     return result
 
 if __name__ == '__main__':
+    # Load training data
+    labeled_data_path = sys.argv[1]
+    unlabeled_data_path = sys.argv[2]
+    tokenizer_path = 'tokenizer_max.pickle'
+    
     # Model settings
-    MAX_SEQUENCE_LENGTH = 30
-    MAX_NUM_WORDS = 20000  # containing padding zeros
+    MAX_SEQUENCE_LENGTH = 40
+    #MAX_NUM_WORDS = 20000  # containing padding zeros
+    MAX_NUM_WORDS = None
     EMBEDDING_DIM = 100
     
     POS_THRESHOLD=0.8
     NEG_THRESHOLD=0.2
 
-    labeled_data_path = sys.argv[1]
-    unlabeled_data_path = sys.argv[2]
+    with open(tokenizer_path, 'rb') as f:
+        tokenizer = pickle.load(f)
+        print('Tokenizer load from %s...' % (tokenizer_path))
+    word_index = tokenizer.word_index
+    num_words = len(word_index)
 
     try:
         x_train_un = np.load('data/x_train_un.npy')
         y_train_un = np.load('data/y_train_un.npy')
+        
         print('Preprocessed data exists... Loaded')
         
     except:
-        print('Load raw data...')
+        print('Load unlabeled raw data...')
         # Load unlabeled data
         f = open(unlabeled_data_path, 'r')
         f.readline()
@@ -80,22 +90,18 @@ if __name__ == '__main__':
         # Text preprocessing
         texts_un = trim(texts_un, threshold=2)
         
-        filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+        #filters = [lambda x: x.lower(), stem_text, strip_numeric, strip_multiple_whitespaces]
+        filters = [lambda x: x.lower(), stem_text, strip_multiple_whitespaces]
         tmp = [' '.join(preprocess_string(s, filters=filters)) for s in texts_un]
         texts_un = tmp
-        
-        # Load old tokenizer
-        tokenizer_path = 'tokenizer_n.pickle'
-        f = open(tokenizer_path, 'rb')
-        tokenizer = pickle.load(f)
-        f.close()
+        del tmp
     
         # Text sequence encoding with old tokenizer
         sequences_un = tokenizer.texts_to_sequences(texts_un)
         data_un = pad_sequences(sequences_un, maxlen=MAX_SEQUENCE_LENGTH)
         
+        # Predict unlabeled training data
         result = np.zeros((len(data_un),))
-        # Load LSTM model
         model_path = 'model_n.h5'
         model = load_model(model_path)
     
@@ -115,20 +121,20 @@ if __name__ == '__main__':
                 
         x_train_un = np.array(x_train_un)
         y_train_un = np.array(y_train_un)
+        print('x_train_un.shape =', x_train_un.shape, '/ data_un.shape =', data_un.shape)
 
         np.save('data/x_train_un.npy', x_train_un)
         np.save('data/y_train_un.npy', y_train_un)
 
-
+    # Load labeled data
     x_train_l = np.load('data/x_train.npy')
     y_train_l = np.load('data/y_train.npy')
     x_val = np.load('data/x_val.npy')
     y_val = np.load('data/y_val.npy')
+    print('Preprocessed labeled data loaded')
 
     x_train = np.concatenate([x_train_l, x_train_un])
     y_train = np.concatenate([y_train_l, y_train_un])
-    
-    num_words = MAX_NUM_WORDS
     
     '''
     f = open(labeled_data_path, 'r')
@@ -187,12 +193,12 @@ if __name__ == '__main__':
     x_val = data[-num_validation_samples:]
     y_val = labels[-num_validation_samples:]
     '''
-    
     model_path = 'model_semi.h5'
     
     model = Sequential()
     model.add(Embedding(num_words,EMBEDDING_DIM,input_length=MAX_SEQUENCE_LENGTH))
-    model.add(LSTM(512, kernel_initializer='truncated_normal'))
+    model.add(LSTM(256, kernel_initializer='truncated_normal', return_sequences=True))
+    model.add(LSTM(256, kernel_initializer='truncated_normal'))
     model.add(Dense(64,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='truncated_normal'))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
