@@ -52,7 +52,7 @@ if __name__ == '__main__':
     testing_data_path = sys.argv[1]
     output_path = sys.argv[2]
 
-    model_path = 'model_semi.h5'
+    #model_path = 'model_semi.h5'
     tokenizer_path = 'tokenizer_max.pickle'
     
     # Model settings
@@ -65,10 +65,6 @@ if __name__ == '__main__':
     f = open(tokenizer_path, 'rb')
     tokenizer = pickle.load(f)
     f.close()
-    
-    # Load LSTM model
-    model = load_model(model_path)
-    model.summary()
     
     # Load testing data
     f = open(testing_data_path, 'r')
@@ -92,8 +88,37 @@ if __name__ == '__main__':
     test_sequences = tokenizer.texts_to_sequences(test_texts)
     x_test = pad_sequences(test_sequences, maxlen=MAX_SEQUENCE_LENGTH)
     
-    # Predict with trained model
+    '''
+    # Predict with ensemble model
+    NUM_ENSEMBLE = 3
+    result = np.zeros((len(x_test), 1), dtype=np.int)
+    for i in range(3,6):
+        model_path = 'model_semi_%d.h5' % (i)
+        model = load_model(model_path)
+        model.summary()
+        
+        result += model.predict_classes(x_test, verbose=1)
+        del model
+    
+    result_list = list(np.squeeze(result))
+    
+    # Output result
+    f = open(output_path, 'w')
+    f.write('id,label\n')
+    for i, y in enumerate(result_list):
+        v = 1 if y > 1 else 0
+        f.write('%d,%d\n' % (i, v))
+    f.close()
+    '''
+
+    # Predict with rnn model
+    model_path = 'model_semi_3.h5'
+    model = load_model(model_path)
+    model.summary()
+    
     result = model.predict_classes(x_test, verbose=1)
+    del model
+    
     result_list = list(np.squeeze(result))
     
     # Output result

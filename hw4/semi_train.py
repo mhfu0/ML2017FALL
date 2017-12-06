@@ -193,25 +193,29 @@ if __name__ == '__main__':
     x_val = data[-num_validation_samples:]
     y_val = labels[-num_validation_samples:]
     '''
-    model_path = 'model_semi.h5'
     
-    model = Sequential()
-    model.add(Embedding(num_words,EMBEDDING_DIM,input_length=MAX_SEQUENCE_LENGTH))
-    model.add(LSTM(256, kernel_initializer='truncated_normal', return_sequences=True))
-    model.add(LSTM(256, kernel_initializer='truncated_normal'))
-    model.add(Dense(64,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='truncated_normal'))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy',
-                  optimizer='rmsprop',
-                  metrics=['acc'])
-    model.summary()
-    
-    checkpointer = ModelCheckpoint(filepath=model_path,
-                                   monitor='val_acc',save_best_only=True,
-                                   verbose=1)
-    model.fit(x_train, y_train,
-              batch_size=128,
-              epochs=10,
-              validation_data=(x_val, y_val),
-              callbacks=[checkpointer])
+    NUM_ENSEMBLE = 7
+    lstm_dim = list(range(64,256+1,32))
+    for i in range(NUM_ENSEMBLE):
+        model_path = 'model_semi_%d.h5' % (i)
+        
+        model = Sequential()
+        model.add(Embedding(num_words,EMBEDDING_DIM,input_length=MAX_SEQUENCE_LENGTH))
+        model.add(LSTM(lstm_dim[i], kernel_initializer='truncated_normal', return_sequences=True))
+        model.add(LSTM(lstm_dim[i], kernel_initializer='truncated_normal'))
+        model.add(Dense(64,kernel_regularizer=regularizers.l2(0.01),kernel_initializer='truncated_normal'))
+        model.add(Dropout(0.5))
+        model.add(Dense(1, activation='sigmoid'))
+        model.compile(loss='binary_crossentropy',
+                      optimizer='rmsprop',
+                      metrics=['acc'])
+        model.summary()
+        
+        checkpointer = ModelCheckpoint(filepath=model_path,
+                                       monitor='val_acc',save_best_only=True,
+                                       verbose=1)
+        model.fit(x_train, y_train,
+                  batch_size=128,
+                  epochs=5,
+                  validation_data=(x_val, y_val),
+                  callbacks=[checkpointer])
