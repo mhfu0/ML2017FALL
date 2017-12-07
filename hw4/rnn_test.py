@@ -88,11 +88,9 @@ if __name__ == '__main__':
     test_sequences = tokenizer.texts_to_sequences(test_texts)
     x_test = pad_sequences(test_sequences, maxlen=MAX_SEQUENCE_LENGTH)
     
-    '''
     # Predict with ensemble model
-    NUM_ENSEMBLE = 3
     result = np.zeros((len(x_test), 1), dtype=np.int)
-    for i in range(3,6):
+    for i in range(3):
         model_path = 'model_semi_%d.h5' % (i)
         model = load_model(model_path)
         model.summary()
@@ -109,8 +107,8 @@ if __name__ == '__main__':
         v = 1 if y > 1 else 0
         f.write('%d,%d\n' % (i, v))
     f.close()
+    
     '''
-
     # Predict with rnn model
     model_path = 'model_semi_3.h5'
     model = load_model(model_path)
@@ -127,3 +125,4 @@ if __name__ == '__main__':
     for i, y in enumerate(result_list):
         f.write('%d,%d\n' % (i, y))
     f.close()
+    '''

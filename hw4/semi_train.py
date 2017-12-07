@@ -194,9 +194,8 @@ if __name__ == '__main__':
     y_val = labels[-num_validation_samples:]
     '''
     
-    NUM_ENSEMBLE = 7
-    lstm_dim = list(range(64,256+1,32))
-    for i in range(NUM_ENSEMBLE):
+    lstm_dim = [160,192,224]
+    for i in range(3):
         model_path = 'model_semi_%d.h5' % (i)
         
         model = Sequential()
