@@ -10,6 +10,7 @@ import pickle
 import itertools
 
 ### Settings for nlg worksation ###
+'''
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 
@@ -20,6 +21,7 @@ config.inter_op_parallelism_threads=2
 #config.gpu_options.per_process_gpu_memory_fraction=0.333
 tf.set_random_seed(7)
 set_session(tf.Session(config=config))
+'''
 
 ### import Keras modules ###
 from keras.models import Model, Sequential, load_model
