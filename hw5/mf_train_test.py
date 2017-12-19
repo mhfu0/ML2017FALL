@@ -91,7 +91,7 @@ if __name__ == '__main__':
                                        verbose=1)
 
         model.fit([users_train, movies_train], ratings_train,
-            batch_size=256, epochs=100,
+            batch_size=256, epochs=35,
             validation_data=([users_val, movies_val], ratings_val),
             callbacks=[checkpointer],
             verbose=1)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     else:
     
-        model = load_model('MF_%d_%d.h5' % (d,r))
+        model = load_model('/home/mhfu/ML2017FALL/hw5/MF_%d_%d.h5' % (d,r))
         #test_data_path = '/home/mhfu/ML2017FALL/hw5/test.csv'
         test_data_path = sys.argv[1]
         with open(test_data_path, 'r') as f:
