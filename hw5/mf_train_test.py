@@ -120,5 +120,10 @@ if __name__ == '__main__':
         with open(sys.argv[2],'w') as f:
             f.write('TestDataID,Rating\n')
             for i, r in enumerate(result):
-                f.write('%d,%.4f\n' %(i+1, r))
-
+                # clipping on result
+                if r <- 1.:
+                    f.write('%d,%.4f\n' %(i+1, 1.))
+                elif r >= 5.:
+                    f.write('%d,%.4f\n' %(i+1, 5.))
+                else:
+                    f.write('%d,%.4f\n' %(i+1, r))
