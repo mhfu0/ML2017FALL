@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     else:
     
-        model = load_model('/home/mhfu/ML2017FALL/hw5/MF_%d_%d.h5' % (d,r))
+        model = load_model('MF_%d_%d.h5' % (d,r))
         #test_data_path = '/home/mhfu/ML2017FALL/hw5/test.csv'
         test_data_path = sys.argv[1]
         with open(test_data_path, 'r') as f:
