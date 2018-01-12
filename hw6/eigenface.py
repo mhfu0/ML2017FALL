@@ -7,8 +7,10 @@ dir_path = sys.argv[1]
 input_path = sys.argv[2]
 output_path = 'reconstruction.jpg'
 
-X = np.array([imread(os.path.join(dir_path, '%d.jpg'%i)).flatten() \
-              for i in range(415)])
+fname_list = list(os.listdir(dir_path))
+
+X = np.array([imread(os.path.join(dir_path, fname)).flatten() \
+              for fname in fname_list])
 
 mu = np.mean(X, 0)
 ma_data = X - mu
@@ -24,12 +26,12 @@ def rescale(M):
     
     return M
 
-def recon_with_k(img_idx, k=4):
+def recon_with_k(fname, k=4):
+    img_idx = fname_list.index(fname)
     return mu + np.dot(weights[img_idx, :k], e_faces.T[:k])
 
 def to_img(I):
     return rescale(I).reshape(600,600,3)
 
-img_idx = int(input_path.split('.')[0])
-recon = to_img(recon_with_k(img_idx, k=4))
+recon = to_img(recon_with_k(input_path, k=4))
 imsave(output_path, recon)
