@@ -1,7 +1,9 @@
 ## ML2017FALL
-The repository is made to keep my works for the course: [Machine Learning (2017,Fall)](http://speech.ee.ntu.edu.tw/~tlkagk/courses_ML17_2.html), held by Prof. [Hung-Yi Lee](http://speech.ee.ntu.edu.tw/~tlkagk/), National Taiwan University.
+The repository is made to keep my works for the course: [Machine Learning (2017,Fall)](http://speech.ee.ntu.edu.tw/~tlkagk/courses_ML17_2.html), 
+held by Prof. [Hung-Yi Lee](http://speech.ee.ntu.edu.tw/~tlkagk/), National Taiwan University.
 ### About the Course
-Learning the basic theory of machine learning and application to various applications.
+Learning the basic theory of machine learning and various applications.
+
 ![course map](http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_map.png)
 
 ### Brief Description
