@@ -4,7 +4,6 @@ held by Prof. [Hung-Yi Lee](http://speech.ee.ntu.edu.tw/~tlkagk/), National Taiw
 ### About the Course
 Learning the basic theory of machine learning and various applications.
 
-![course map](http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_map.png)
 [Course map](http://speech.ee.ntu.edu.tw/~tlkagk/courses/ML_map.png)
 
 ### Brief Description
