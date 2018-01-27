@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # Prediction on test set with saved model
-# model: 
-# ./test_linear.py [model] [test] > [result]
+# python3 test_linear.py [model] [test] > [result]
 
 import sys
 import numpy as np

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # Prediction on test set with saved model
-# model: 18lin+2quad 25000iter 25%rand_drop
-# ./test_best.py [model] [test] > [result]
+# python3 test_best.py [model] [test] > [result]
 
 import sys
 import numpy as np

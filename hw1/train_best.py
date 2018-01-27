@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Linear regresssion
-# ./train_best.py [train] [test] [model] > [result]
+# python3 train_best.py [train] [test] [model]
 
 import sys
 import numpy as np
