@@ -1,0 +1,21 @@
+HW6: Unsupervised Learning & Dimension Reduction
+Dimension reduction and clustering using PCA and KMeans clustering
+
+The task contains two parts.
+
+Part 1: Eigenface using PCA
+[Data Format]
+415 facial images
+
+[Script Usage]
+bash ./pca.sh <images path> <target image>
+
+Part 2: Image clustering
+[Data Format]
+train.npy: 28*28 grayscale images from two differnet dataset
+test_case.csv: image index pairs
+
+[Script Usage]
+bash ./hw6.sh <image.npy path> <test_case.csv path> <prediction file path>
+
+Refer to https://ntumlta.github.io/2017fall-ml-hw6/ for more details.
