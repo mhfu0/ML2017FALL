@@ -1,0 +1,14 @@
+HW5: Movie Recommendation
+Simple recommendation system using matrix factorization
+
+[Data Format]
+train.csv:  ground-truth movie ratings
+test.csv:   movie ratings to predict
+users.csv:  supplemental information about users
+movies.csv: supplemental information about movies
+
+[Script Usage]
+bash  hw5.sh <test.csv path> <prediction file path> <movies.csv path> <users.csv path>
+bash  hw5_best.sh  <test.csv path> <prediction file path> <movies.csv path> <users.csv path>
+
+Refer to https://ntumlta.github.io/2017fall-ml-hw5/ for more details.
