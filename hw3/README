@@ -1,12 +1,11 @@
 HW3: Image Sentiment Classification
-Multiclass classification using deep learning libraries
+Multiclass classification using convolutional neural network
 
 [Data Format]
 train.csv: 28*28 grayscale image with image index
 test.csv: sentiment label of corresponding image
 
 [Script Usage]
-CNN model:
 bash ./hw3_train.sh <training data>
 bash ./hw3_test.sh <testing data> <prediction file>
 
