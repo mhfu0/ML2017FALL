@@ -1,0 +1,14 @@
+HW1: PM2.5 Prediction
+Linear regression with gradient descent optimization
+
+[Data Format]
+train.csv: hourly weather observation records of 豐原觀測站
+test.csv: records of previous 9 hours
+
+[Usage]
+Baseline model:
+./hw1.sh [testdata] [result]
+Best model:
+./hw1_best.sh [testdata] [result]
+
+Refer to https://ntumlta.github.io/2017fall-ml-hw1/ for more details.
