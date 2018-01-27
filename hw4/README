@@ -1,0 +1,13 @@
+HW4: Text Sentiment Classification
+Semi-supervised learning using recurrent neural networks
+
+[Data Format]
+training_label.txt: labeled training data (tweets)
+training_nolabel.txt: unlabeled training data (tweets)
+testing_data.txt: testing data (tweets) to predict
+
+[Script Usage]
+bash ./hw4_train.sh <training label data> <training unlabel data> 
+bash ./hw4_test.sh <testing data> <prediction file>
+
+Refer to https://ntumlta.github.io/2017fall-ml-hw4/ for more details.
