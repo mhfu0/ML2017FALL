@@ -2,7 +2,7 @@ HW2: Income Prediction
 Binary classification with logistic regression and gradient descent
 
 [Data Format]
-ADULT dataset: Predict whether income exceeds $50K/yr based on census data. Also known as "Census Income" dataset.
+ADULT dataset: Predict whether income exceeds $50K/yr based on census data. 
 
 train.csv: customer information
 test.csv: income information
