@@ -11,9 +11,14 @@ Y_train: whether the customer's income reach the criteria
 X_test: one-hot-encoded customer information, in csv format
 
 [Script Usage]
-Logistic regression model: ./hw2_logistic.sh $1 $2 $3 $4 $5 $6
-Probabilstic generative model: ./hw2_generative.sh $1 $2 $3 $4 $5 $6
-Best model (Xgboost): ./hw2_best.sh $1 $2 $3 $4 $5 $6
+Logistic regression model:
+bash ./hw2_logistic.sh $1 $2 $3 $4 $5 $6
+
+Probabilstic generative model:
+bash ./hw2_generative.sh $1 $2 $3 $4 $5 $6
+
+Best model (Xgboost):
+bash ./hw2_best.sh $1 $2 $3 $4 $5 $6
 
 $1: raw data (train.csv)              $2: test data (test.csv)  
 $3: provided train feature (X_train)  $4: provided train label (Y_train)
